@@ -1,0 +1,109 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+        <title></title>
+        <meta name="description" content=""/>
+        <meta name="viewport" content="width=device-width"/>
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="stylesheet" href="styles/main.css"/>
+        <!-- build:js scripts/vendor/modernizr.js -->
+        <script src="bower_components/modernizr/modernizr.js"></script>
+        <!-- endbuild -->
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                <button id="save">Save workouts</button>
+                <button id="retrieve">Retrieve workouts</button>
+                <button id="" onclick="WRK.workout.create(); return false;">Create Workout</button>
+                <button id="test-workout">Test Workout</button>
+                <button id="get-exercise-library">Exercise library</button>
+            </div>
+
+            <section data-js="workouts">
+                <header>
+                    <h1>Workout Timer</h1>
+                </header>
+            </section>
+
+            <section data-js="exercise-collection">
+                <header>
+                    <h1>Exercise Collection</h1>
+                </header>
+                <p>
+                    <a href="#" data-js="exercise-new">Add Exercise</a>
+                </p>
+                <fieldset>
+                    <label for="exercise-name">Name:</label>
+                    <input type="text" id="exercise-name"/>
+                    <button data-js="exercise-create">Create Exercise</button>
+                </fieldset>
+                <fieldset data-js="exercise-collection-list">
+                    <p>No exercises</p>
+                </fieldset>
+            </section>
+
+            <section data-js="exercise-config" data-id="0">
+                <header>
+                    <h1>Exercise Config</h1>
+                </header>
+                <fieldset>
+                    <p>
+                        <label for="name">Name:</label>
+                        <input type="text" id="name"/>
+                    </p>
+                    <p>
+                        <label for="type">Type:</label>
+                        <input type="radio" name="type" id="timed" value="timed"/>
+                        <label for="timed">Timed</label>
+
+                        <input type="radio" name="type" id="repetition" value="repetition"/>
+                        <label for="repetition">Repetition</label>
+                    </p>
+                    <p>
+                        <label for="sets">Sets:</label>
+                        <input type="number" id="sets" min="0" max="100" step="1"/>
+                    </p>
+                    <p>
+                        <label for="rest">Rest between sets:</label>
+                        <input type="range" id="rest" min="0" max="60" step="10" value="0"/>
+                        <br/>
+                        <input type="radio" name="rest-time" id="rest-seconds" value="seconds"/>
+                        <label for="rest-seconds">Seconds</label>
+
+                        <input type="radio" name="rest-time" id="rest-minutes" value="minutes"/>
+                        <label for="rest-minutes">Minutes</label>
+                    </p>
+                </fieldset>
+                <fieldset>
+                    <button data-js="exercise-add-ready">Add</button>
+                    <button data-js="exercise-delete">Delete</button>
+                </fieldset>
+            </section>
+
+        </div>
+
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
+
+        <script src="scripts/lib/amplify.core.js"></script>
+        <!-- build:js scripts/main.js -->
+        <!--<script src="bower_components/jquery/jquery.js"></script>-->
+        <script src="scripts/util.js"></script>
+        <script src="scripts/workout.js"></script>
+        <script src="scripts/exercise.js"></script>
+        <script src="scripts/timer.js"></script>
+        <script src="scripts/core.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js(.tmp) scripts/coffee.js -->
+        <!--<script src="scripts/hello.js"></script>-->
+        <!-- endbuild -->
+</body>
+</html>
