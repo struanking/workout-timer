@@ -35,6 +35,35 @@ WRK.exercise = (function () {
         this.name = name;
     };
 
+    Exercise.prototype.set = {
+        name: function (value) {
+            console.log('value = ' + value);
+            this.name = value;
+        },
+
+        type: function (value) {
+            this.type = value;
+        },
+
+        sets: function (value) {
+            this.sets = value;
+        },
+
+        rest: function (value) {
+            this.rest = value;
+        },
+
+        restUnits: function (value) {
+            this.restUnits = value;
+        }
+    };
+
+    Exercise.prototype.get = {
+        name: function () {
+            return this.name;
+        }
+    };
+
     Exercise.prototype.getType = function () {
         return this.type;
     };
@@ -104,7 +133,6 @@ WRK.exercise = (function () {
 
     function createLibrary () {
         this.library = new Library();
-        console.log('library', this.library);
     }
 
     /* Create a new exercise
@@ -128,6 +156,23 @@ WRK.exercise = (function () {
         this.library.add(ex);
     }
     
+    function exerciseFormData() {
+        var form = doc.querySelector('[data-js="exercise-config"]'),
+            name = form.querySelector('#name').value,
+            type = WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
+            sets = form.querySelector('#sets').value,
+            restUnits = WRK.util.getRadioValue(form.querySelectorAll('[name="rest-time"]')),
+            rest = form.querySelector('#rest').value,
+            data = {
+                "name": name,
+                "type": type,
+                "sets": sets,
+                "rest": rest,
+                "restUnits": restUnits
+            };
+        return data;
+    }
+
     function exerciseDetail(index) {
         var ex = this.library.collection[index],
             form = doc.querySelector('[data-js="exercise-config"]');
@@ -146,11 +191,27 @@ WRK.exercise = (function () {
         form.querySelector('#rest').value = ex.getRest();
     }
 
+    function exerciseUpdate(id) {
+        var index = WRK.exercise.library.collection.findByProperty('id', id),
+            ex = WRK.exercise.library.collection[index],
+            data = WRK.exercise.formData();
+
+        console.log('index = ' + index + ', ex:', ex);
+
+        for (var key in data) {
+            console.log('Set ' + key + ' = ' + data[key]);
+            ex.set[key].call(ex, data[key]);
+        }
+
+    }
+
     return {
         init: createLibrary,
         create: createExercise,
         detail: exerciseDetail,
-        titles: titles
+        formData: exerciseFormData,
+        titles: titles,
+        update: exerciseUpdate
     }
 }());
 

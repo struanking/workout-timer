@@ -20,11 +20,17 @@ amplify.subscribe('exercise-add-ready', function (data) {
 	WRK.exercise.create(data);
 });
 
+// Exercise: update
+amplify.subscribe('exercise-update-ready', function (data, id) {
+	WRK.exercise.update(data, id);
+});
+
 // Exercise: collection updated
 amplify.subscribe('exercise-collection-updated', function () {
 	WRK.exercise.library.refresh();
 });
 
+// Exercise: request details
 amplify.subscribe('exercise-detail', function (id) {
 	WRK.exercise.detail(id);
 });
@@ -65,22 +71,12 @@ WRK.util.addListener(window, 'click', function(ev) {
 		amplify.publish(eventType, name);
 		break;
 	case 'exercise-add-ready':
-		var id = null,
-			form = doc.querySelector('[data-js="exercise-config"]'),
-			name = form.querySelector('#name').value,
-			type = WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
-			sets = form.querySelector('#sets').value,
-			restTime = WRK.util.getRadioValue(form.querySelectorAll('[name="rest-time"]')),
-			rest = form.querySelector('#rest').value,
-			data = {
-				"name": name,
-				"type": type,
-				"sets": sets,
-				"rest": rest,
-				"restUnits": restTime
-			};
-
-		amplify.publish(eventType, data);			
+		var data = WRK.exercise.formData();
+		amplify.publish(eventType, data);		
+		break;
+	case 'exercise-update-ready':
+		var id = doc.querySelector('[data-js="exercise-config"]').dataset.id; // or, use getId on object
+		WRK.exercise.update(+id);
 		break;
 	case 'exercise-delete':
 		var id = doc.querySelector('[data-js="exercise-config"]').dataset.id; // or, use getId on object
