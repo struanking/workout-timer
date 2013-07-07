@@ -2,7 +2,15 @@ var WRK = WRK || {};
 
 WRK.exercise = (function () {
 
-    var titles = {
+    var defaultExercise = {
+            "name": 'default',
+            "type": 'timed',
+            "sets": 1,
+            "rest": 0,
+            "restUnits": 'seconds'
+        },
+
+        titles = {
             e1: 'Squats',
             e2: 'Sit-ups',
             e3: 'Press-ups',
@@ -23,21 +31,8 @@ WRK.exercise = (function () {
         this.restUnits = data.restUnits || '';
     }
 
-    Exercise.prototype.getId = function () {
-        return this.id;
-    };
-
-    Exercise.prototype.getName = function () {
-        return this.name;
-    };
-
-    Exercise.prototype.setName = function (name) {
-        this.name = name;
-    };
-
     Exercise.prototype.set = {
         name: function (value) {
-            console.log('value = ' + value);
             this.name = value;
         },
 
@@ -58,26 +53,8 @@ WRK.exercise = (function () {
         }
     };
 
-    Exercise.prototype.get = {
-        name: function () {
-            return this.name;
-        }
-    };
-
-    Exercise.prototype.getType = function () {
-        return this.type;
-    };
-
-    Exercise.prototype.getSets = function () {
-        return this.sets;
-    };
-
-    Exercise.prototype.getRest = function () {
-        return this.rest;
-    };
-
-    Exercise.prototype.getRestUnits = function () {
-        return this.restUnits;
+    Exercise.prototype.get = function (prop) {
+        return this[prop];
     };
 
     function TimedExercise(data) {
@@ -97,49 +74,65 @@ WRK.exercise = (function () {
 
     function Library() {
         this.collection = [];
+        this.node = document.createElement('fieldset');
+        this.node.dataset.js = 'exercise-collection-list';
     }
 
     Library.prototype.add = function (ex) {
-        console.log('Adding...');
         var collection = this.collection;
         ex.id = (collection && collection.length > 0) ? collection[collection.length - 1].id + 1 : 0;
         this.collection.push(ex);
-        console.log('collection', this.collection);
         amplify.publish('exercise-collection-updated');
     }
 
     Library.prototype.delete = function (id) {
         var index = this.collection.findByProperty('id', +id);
-        //var index = this.collection.indexOf(ex);
         console.log('Heard delete request for: ' + id + ', index = ' + index + ', collection', this.collection);
         this.collection.splice(index, 1);
         amplify.publish('exercise-collection-updated');
     }
 
-    Library.prototype.refresh = function () {
-        var container = document.querySelector('[data-js="exercise-collection-list"]'),
-            ex,
-            html = '<ul>';
+    Library.prototype.render = function () {
+        // This needs to be a template call
+        var ex,
+            html = '',
+            max = this.collection.length;
 
-        for (var i = 0, max = this.collection.length; i < max; i += 1) {
-            ex = this.collection[i];
-            html += '<li><a href="#" data-js="exercise-detail" data-index="' + ex.getId() + '">' + ex.getName() + '</a></li>';
+        if (max > 0) {
+            html = '<ul>';
+            for (var i = 1; i < max; i += 1) {
+                ex = this.collection[i];
+                html += '<li><a href="#" data-js="exercise-detail" data-id="' + ex.get('id') + '">' + ex.get('name') + '</a></li>';
+            }
+            html += '</ul>';
+        } else {
+            html = '<p>No exercises</p>';
         }
 
-        html += '</ul>';
+        this.node.innerHTML = html;
+        return true;
+    }
 
-        container.innerHTML = html;
+    Library.prototype.refresh = function () {
+        var container = document.querySelector('[data-js="exercise-collection"]');
+            //container = document.querySelector('[data-js="exercise-collection-list"]'),
+        this.render();
+        //container.innerHTML = html;
+        container.appendChild(this.node);
     }
 
     function createLibrary () {
         this.library = new Library();
+        this.create(true);
+        this.library.refresh();
     }
 
     /* Create a new exercise
      * @Public
      */
-    function createExercise (data) {
-        var ex,
+    function createExercise(useDefault) {
+        var data = useDefault ? defaultExercise : exerciseFormData(),
+            ex,
             type = data.type || null;
 
         switch (type) {
@@ -152,64 +145,49 @@ WRK.exercise = (function () {
         default:
             console.log('No exercise type provided');
         }
-        console.log('Add to lib...');
         this.library.add(ex);
     }
     
     function exerciseFormData() {
         var form = doc.querySelector('[data-js="exercise-config"]'),
-            name = form.querySelector('#name').value,
-            type = WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
-            sets = form.querySelector('#sets').value,
-            restUnits = WRK.util.getRadioValue(form.querySelectorAll('[name="rest-time"]')),
-            rest = form.querySelector('#rest').value,
             data = {
-                "name": name,
-                "type": type,
-                "sets": sets,
-                "rest": rest,
-                "restUnits": restUnits
+                "name": form.querySelector('#exercise-name').value,
+                "type": WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
+                "sets": form.querySelector('#sets').value,
+                "rest": form.querySelector('#rest').value,
+                "restUnits": WRK.util.getRadioValue(form.querySelectorAll('[name="rest-time"]'))
             };
         return data;
     }
 
-    function exerciseDetail(index) {
-        var ex = this.library.collection[index],
+    function exerciseDetail(id) {
+        var index = id ? WRK.exercise.library.collection.findByProperty('id', +id) : 0,
+            ex = this.library.collection[index],
             form = doc.querySelector('[data-js="exercise-config"]');
 
-        console.log(ex.getId());
-        console.log(ex.getName());
-        console.log(ex.getType());
-        console.log(ex.getSets());
-        console.log(ex.getRest());
-        console.log(ex.getRestUnits());
-
-        form.querySelector('#name').value = ex.getName();
-        form.querySelector('#' + ex.getType()).checked = 'checked';
-        form.querySelector('#sets').value = ex.getSets();
-        form.querySelector('#rest-' + ex.getRestUnits()).checked = 'checked';
-        form.querySelector('#rest').value = ex.getRest();
+        form.dataset.id = ex.get('id');
+        form.querySelector('#exercise-name').value = ex.get('name');
+        form.querySelector('#' + ex.get('type')).checked = 'checked';
+        form.querySelector('#sets').value = ex.get('sets');
+        form.querySelector('#rest-' + ex.get('restUnits')).checked = 'checked';
+        form.querySelector('#rest').value = ex.get('rest');
     }
 
     function exerciseUpdate(id) {
-        var index = WRK.exercise.library.collection.findByProperty('id', id),
+        var index = id ? WRK.exercise.library.collection.findByProperty('id', +id) : 0,
             ex = WRK.exercise.library.collection[index],
-            data = WRK.exercise.formData();
-
-        console.log('index = ' + index + ', ex:', ex);
+            data = exerciseFormData();
 
         for (var key in data) {
             console.log('Set ' + key + ' = ' + data[key]);
             ex.set[key].call(ex, data[key]);
         }
-
     }
 
     return {
         init: createLibrary,
         create: createExercise,
         detail: exerciseDetail,
-        formData: exerciseFormData,
         titles: titles,
         update: exerciseUpdate
     }

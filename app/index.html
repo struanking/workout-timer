@@ -25,10 +25,49 @@
                 <button id="get-exercise-library">Exercise library</button>
             </div>
 
-            <section data-js="workouts">
+            <section data-js="workout-collection">
                 <header>
-                    <h1>Workout Timer</h1>
+                    <h1>Workouts</h1>
                 </header>
+                <p>
+                    <a href="#" data-js="workout-new">Add Workout</a>
+                </p>
+                <fieldset>
+                    <label for="workout-name">Name:</label>
+                    <input type="text" id="workout-name"/>
+                    <button data-js="workout-create">Create Workout</button>
+                </fieldset>
+            </section>
+
+            <section data-js="workout-config">
+                <header>
+                    <h1>Workout Config</h1>
+                </header>
+                <fieldset>
+                    <p>
+                        <label for="workout-name">Name:</label>
+                        <input type="text" id="workout-name"/>
+                    </p>
+                    <p>
+                        <label for="defaultRecoveryTime">Default recovery time:</label>
+                        <input type="text" id="defaultRecoveryTime"/>
+                    </p>
+                    <p>
+                        <label for="rest">Default rest between sets:</label>
+                        <input type="range" id="default-rest" min="0" max="60" step="10" value="0"/>
+                        <br/>
+                        <input type="radio" name="default-rest-time" id="default-rest-seconds" value="seconds"/>
+                        <label for="default-rest-seconds">Seconds</label>
+
+                        <input type="radio" name="default-rest-time" id="default-rest-minutes" value="minutes"/>
+                        <label for="default-rest-minutes">Minutes</label>
+                    </p>
+                </fieldset>
+                <fieldset>
+                    <button data-js="workout-add-ready">Add</button>
+                    <button data-js="workout-update-ready">Update</button>
+                    <button data-js="workout-delete">Delete</button>
+                </fieldset>
             </section>
 
             <section data-js="exercise-collection">
@@ -38,24 +77,16 @@
                 <p>
                     <a href="#" data-js="exercise-new">Add Exercise</a>
                 </p>
-                <fieldset>
-                    <label for="exercise-name">Name:</label>
-                    <input type="text" id="exercise-name"/>
-                    <button data-js="exercise-create">Create Exercise</button>
-                </fieldset>
-                <fieldset data-js="exercise-collection-list">
-                    <p>No exercises</p>
-                </fieldset>
             </section>
 
-            <section data-js="exercise-config" data-id="0">
+            <section data-js="exercise-config">
                 <header>
                     <h1>Exercise Config</h1>
                 </header>
                 <fieldset>
                     <p>
                         <label for="name">Name:</label>
-                        <input type="text" id="name"/>
+                        <select id="exercise-name"></select>
                     </p>
                     <p>
                         <label for="type">Type:</label>

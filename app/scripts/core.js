@@ -1,57 +1,45 @@
 var doc = document;
 
 /*
- * Exercises
+ * Workouts
  */
-amplify.subscribe('exercise-new', function () {
-	// Activate exercise name field
-    doc.querySelector('#exercise-name').focus();
+
+amplify.subscribe('workout-new', function () {
+    doc.querySelector('#workout-name').focus(); // Activate workout name field
 });
 
-amplify.subscribe('exercise-create', function (name) {
+amplify.subscribe('workout-create', function (name) {
+	// Activate workout config
+    doc.querySelector('[data-js="workout-config"]').focus();
+    doc.querySelector('[data-js="workout-config"]').style.borderColor = '#C00';
+    doc.querySelector('[data-js="workout-config"] #name').value = name;
+});
+
+/*
+ * Exercises
+ */
+amplify.subscribe('exercise-new', function (name) {
 	// Activate exercise config
     doc.querySelector('[data-js="exercise-config"]').focus();
     doc.querySelector('[data-js="exercise-config"]').style.borderColor = '#C00';
-    doc.querySelector('[data-js="exercise-config"] #name').value = name;
-});
 
-// Exercise: new
-amplify.subscribe('exercise-add-ready', function (data) {
-	WRK.exercise.create(data);
-});
+    var //select = doc.documentFragment('exercise-name'),
+    	titles = WRK.exercise.titles,
+    	html = '';
 
-// Exercise: update
-amplify.subscribe('exercise-update-ready', function (data, id) {
-	WRK.exercise.update(data, id);
+    for (var key in titles) {
+    	html += '<option>' + titles[key] + '</select>';
+    }
+
+    doc.querySelector('#exercise-name').innerHTML = html;
 });
 
 // Exercise: collection updated
 amplify.subscribe('exercise-collection-updated', function () {
+	WRK.exercise.detail();
 	WRK.exercise.library.refresh();
 });
-
-// Exercise: request details
-amplify.subscribe('exercise-detail', function (id) {
-	WRK.exercise.detail(id);
-});
-
-amplify.subscribe('exercise-delete', function (id) {
-	WRK.exercise.library.delete(id);
-});
 // End exercises
-
-/*
-WRK.util.addListener(doc.querySelector('[data-js="exercise-collection"]'), 'click', function(ev) {
-	console.log('exercise-collection click');
-	ev.preventDefault();
-	var type = ev.target.getAttribute('data-js');
-	switch (type) {
-	case 'exercise-add':
-		amplify.publish(type);
-		break;
-	}
-});
-*/
 
 WRK.util.addListener(window, 'click', function(ev) {
 	//console.log('Window click heard');
@@ -63,27 +51,33 @@ WRK.util.addListener(window, 'click', function(ev) {
 	}
 
 	switch (eventType) {
+	case 'workout-new':
+		amplify.publish(eventType);
+		break;
+	case 'workout-create':
+		var name = doc.querySelector('#workout-name').value;
+		console.log('wrk name = ' + name);
+		amplify.publish(eventType, name);
+		break;
+	case 'workout-add-ready':
+		WRK.workout.create();
+		break;
 	case 'exercise-new':
 		amplify.publish(eventType);
 		break;
-	case 'exercise-create':
-		var name = doc.querySelector('#exercise-name').value;
-		amplify.publish(eventType, name);
-		break;
 	case 'exercise-add-ready':
-		var data = WRK.exercise.formData();
-		amplify.publish(eventType, data);		
+		WRK.exercise.create();
 		break;
 	case 'exercise-update-ready':
 		var id = doc.querySelector('[data-js="exercise-config"]').dataset.id; // or, use getId on object
-		WRK.exercise.update(+id);
+		WRK.exercise.update(id);
 		break;
 	case 'exercise-delete':
 		var id = doc.querySelector('[data-js="exercise-config"]').dataset.id; // or, use getId on object
-		amplify.publish(eventType, id);
+		WRK.exercise.library.delete(id);
 		break;
 	case 'exercise-detail':
-		amplify.publish(eventType, elem.getAttribute('data-index'));
+		WRK.exercise.detail(elem.getAttribute('data-id'));
 		break;
 	}
 });
