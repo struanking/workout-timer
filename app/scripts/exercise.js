@@ -89,12 +89,19 @@ WRK.exercise = (function () {
         default:
             console.log('No exercise type provided');
         }
-        this.library.add(ex);
+
+        var parentId = data.parentId,
+            index = parentId ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
+            obj = WRK.workouts.collection[index];
+
+        //this.library.add(ex);
+        obj.addExercise(ex);
     }
     
     function formData() {
         var form = doc.querySelector('[data-js="exercise-config"]'),
             data = {
+                "parentId": form.dataset.parentId,
                 "name": form.querySelector('#exercise-name').value,
                 "type": WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
                 "sets": form.querySelector('#sets').value,
