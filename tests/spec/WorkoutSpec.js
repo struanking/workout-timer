@@ -1,0 +1,156 @@
+/*
+
+Test
+----
+
+-init checks ("no workouts")
+-create workout1 with a name etc
+-create workout2 with a name etc
+-check size of library
+-check name of workout1
+-check name of workout2
+check other props of workout1
+-update workout1
+-check new values
+-add exercise1 to workout1
+-add exercise2 to workout1
+-add exercise3 to workout1
+-check size of exercise collection in workout1
+-delete exercise2 from workout1
+-check size of exercise collection in workout1
+check exercises left are 1 and 3
+update exercise1
+check for new values
+
+*/
+
+/*global
+    $: false,           jasmine: false,         expect: false,      it: false,      spyOn: false,
+    afterEach: false,   beforeEach: false,      describe: false,    BW: true,      window: true,
+    navigator: true,
+*/
+
+describe('Workouts', function() {
+    'use strict';
+
+    beforeEach(function() {
+    	$('body').append('<a href="#" id="mylink">My Link</a>');
+    });
+
+    afterEach(function() {
+        $('#mylink').remove();
+    });
+
+    it('Click my link', function() {
+        spyOnEvent($('#mylink'), 'click');
+        $('#mylink').trigger('click');
+        expect('click').toHaveBeenTriggeredOn($('#mylink'));
+    });
+
+    describe('Init checks', function() {
+    	it('There are zero workouts', function() {
+    		expect(WRK.workouts).toBe(undefined);
+    	});
+    });
+
+	describe('New Workout', function() {
+
+		beforeEach(function() {
+	    	var data = {"name": "workout1"};
+	    	WRK.workout.create(data);
+	    });
+
+	    afterEach(function() {
+	        WRK.workouts.collection = [];
+	    });
+
+	    it('Workout1 name set to "workout1"', function() {
+	    	expect(WRK.workouts.collection[0].get('name')).toBe('workout1');
+	    });
+
+	    it('Workout1 ID set to "0"', function() {
+	    	expect(WRK.workouts.collection[0].get('id')).toBe(0);
+	    });
+
+	    it('Number of workouts is 1', function() {
+	    	expect(WRK.workouts.collection.length).toBe(1);
+	    });
+
+	    it('Add another workout: Number of workouts is 2', function() {
+	    	var data = {"name": "workout2"};
+	    	WRK.workout.create(data);
+	    	expect(WRK.workouts.collection.length).toBe(2);
+	    });
+
+	    it('Workout2 name set to "workout2"', function() {
+	    	var data = {"name": "workout2"};
+	    	WRK.workout.create(data);
+	    	expect(WRK.workouts.collection[1].get('name')).toBe('workout2');
+	    });
+	});
+
+	describe('Updating Workout', function() {
+
+		beforeEach(function() {
+	    	var data = {"name": "workout1"};
+	    	WRK.workout.create(data);
+	    });
+
+	    afterEach(function() {
+	        WRK.workouts.collection = [];
+	    });
+
+	    it('Workout1 name set to "workout1"', function() {
+	    	expect(WRK.workouts.collection[0].get('name')).toBe('workout1');
+	    });
+
+	    it('Workout1 name now set to "workout1Updated"', function() {
+	    	WRK.workouts.collection[0].set('name', 'workout1Updated');
+	    	expect(WRK.workouts.collection[0].get('name')).toBe('workout1Updated');
+	    });
+	});
+
+	describe('Add exercise to workout', function() {
+
+		beforeEach(function() {
+	    	var data = {"name": "workout1"};
+	    	WRK.workout.create(data);
+	    });
+
+	    afterEach(function() {
+	        WRK.workouts.collection = [];
+	    });
+
+	    it('Workout1 has zero exercises', function() {
+	    	expect(WRK.workouts.collection[0].exercises.length).toBe(0);
+	    });
+
+	    it('Workout1 has 1 exercise', function() {
+	    	var exData = {};
+	    	WRK.workouts.collection[0].addExercise(exData);
+	    	expect(WRK.workouts.collection[0].exercises.length).toBe(1);
+	    });
+
+	    it('Workout1 has 3 exercises', function() {
+	    	var exData = {};
+	    	WRK.workouts.collection[0].addExercise(exData);
+	    	WRK.workouts.collection[0].addExercise(exData);
+	    	WRK.workouts.collection[0].addExercise(exData);
+	    	expect(WRK.workouts.collection[0].exercises.length).toBe(3);
+	    });
+
+	    it('Workout1 has 2 exercises after adding 3 and deleting 1', function() {
+	    	var exData = {};
+	    	var wrk1 = WRK.workouts.collection[0];
+
+	    	wrk1.addExercise(exData);
+	    	wrk1.addExercise(exData);
+	    	wrk1.addExercise(exData);
+
+	    	var ex2 = wrk1.exercises[1];
+
+	    	wrk1.deleteExercise(ex2);
+	    	expect(WRK.workouts.collection[0].exercises.length).toBe(2);
+	    });
+	});
+});

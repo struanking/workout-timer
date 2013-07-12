@@ -44,8 +44,8 @@ WRK.workout = (function () {
     /* Create a new workout
      * @Public
      */
-    function createWorkout() {
-        var data = formData(),
+    function createWorkout(data) {
+        var data = data || formData(),
             workout = new Workout(data);
 
         if (!WRK.workouts) {
@@ -54,6 +54,7 @@ WRK.workout = (function () {
 
         WRK.workouts.add(workout); // To do: create a Library and add workout to it
         console.log('Workout: name = ' + workout.get('name') + ', id = ' + workout.get('id'));
+        return workout;
     }
 
     function detail(id) {

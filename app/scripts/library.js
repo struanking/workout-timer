@@ -46,16 +46,11 @@ WRK.library = (function () {
 
     Library.prototype.refresh = function () {
         var container = document.querySelector('[data-js="' + this.type + '-collection"]');
-		//container = document.querySelector('[data-js="exercise-collection-list"]'),
         this.render();
-        //container.innerHTML = html;
-        container.appendChild(this.node);
+        container && container.appendChild(this.node);
     }
 
     function createLibrary (type) {
-        //this.library = new Library();
-        //this.create(true);
-        //this.library.refresh();
         switch (type) {
         case 'exercise':
         	break;
