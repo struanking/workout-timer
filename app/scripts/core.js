@@ -72,7 +72,6 @@ WRK.util.addListener(window, 'click', function(ev) {
 		break;
 	case 'workout-create':
 		var name = doc.querySelector('#workout-name').value;
-		console.log('wrk name = ' + name);
 		amplify.publish(eventType, name);
 		break;
 	case 'workout-add-ready':
@@ -81,6 +80,7 @@ WRK.util.addListener(window, 'click', function(ev) {
 	case 'workout-update-ready':
 		var id = doc.querySelector('[data-js="workout-config"]').dataset.id; // or, use getId on object
 		WRK.workout.update(id);
+        amplify.publish('workout-collection-updated'); // may only need to update if name changed
 		break;
 	case 'exercise-new':
 		var parentId = doc.querySelector('[data-js="workout-config"]').dataset.id; // or, use getId on object

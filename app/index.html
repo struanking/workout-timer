@@ -49,34 +49,30 @@
                         <input type="text" id="workout-name"/>
                     </p>
                     <p>
-                        <label for="defaultRecoveryTime">Default recovery time:</label>
-                        <input type="text" id="defaultRecoveryTime"/>
+                        <label for="default-recovery-time">Default recovery time:</label>
+                        <input type="text" id="default-recovery-time"/>
                     </p>
                     <p>
                         <label for="rest">Default rest between sets:</label>
                         <input type="range" id="default-rest" min="0" max="60" step="10" value="0"/>
                         <br/>
-                        <input type="radio" name="default-rest-time" id="default-rest-seconds" value="seconds"/>
+                        <input type="radio" name="default-rest-units" id="default-rest-seconds" value="seconds"/>
                         <label for="default-rest-seconds">Seconds</label>
 
-                        <input type="radio" name="default-rest-time" id="default-rest-minutes" value="minutes"/>
+                        <input type="radio" name="default-rest-units" id="default-rest-minutes" value="minutes"/>
                         <label for="default-rest-minutes">Minutes</label>
                     </p>
                 </fieldset>
+
+                <p>
+                    <a href="#" data-js="exercise-new">Add Exercise</a>
+                </p>
+
                 <fieldset>
                     <button data-js="workout-add-ready">Add</button>
                     <button data-js="workout-update-ready">Update</button>
                     <button data-js="workout-delete">Delete</button>
                 </fieldset>
-            </section>
-
-            <section data-js="exercise-collection">
-                <header>
-                    <h1>Exercise Collection</h1>
-                </header>
-                <p>
-                    <a href="#" data-js="exercise-new">Add Exercise</a>
-                </p>
             </section>
 
             <section data-js="exercise-config">

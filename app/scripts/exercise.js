@@ -77,7 +77,10 @@ WRK.exercise = (function () {
     function createExercise(useDefault) {
         var data = useDefault ? defaultExercise : formData(),
             ex,
-            type = data.type || null;
+            parentId = data.parentId,
+            index = parentId !== 'undefined' ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
+            obj = WRK.workouts.collection[index],
+            type = data.type;
 
         switch (type) {
         case 'timed':
@@ -90,11 +93,6 @@ WRK.exercise = (function () {
             console.log('No exercise type provided');
         }
 
-        var parentId = data.parentId,
-            index = parentId ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
-            obj = WRK.workouts.collection[index];
-
-        //this.library.add(ex);
         obj.addExercise(ex);
     }
     
