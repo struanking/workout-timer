@@ -28,13 +28,9 @@ WRK.workout = (function () {
 
             for (var prop in defaults) {
                 if (!(prop in data) || !data[prop]) {
-                    //data[prop] = defaults[prop];
                     this[prop] = defaults[prop];
                 }
             }
-
-            console.log('data:', data);
-            //this.data = data;
         },
 
         set: function (prop, value) {
@@ -85,10 +81,6 @@ WRK.workout = (function () {
             index = WRK.workouts.collection.findByProperty('id', +id),
             obj = WRK.workouts.collection[index],
             form = doc.querySelector('[data-js="workout-config"]');
-
-        console.log('id = ' + id);
-        console.log('index = ' + index);
-        console.log('obj: ', obj);
 
         form.dataset.id = obj.get('id');
         form.querySelector('#workout-name').value = obj.get('name');

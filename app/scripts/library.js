@@ -26,6 +26,7 @@ WRK.library = (function () {
 
 	    render: function () {
 	        // This needs to be a template call
+	        console.time('render template in app');
 	        var obj,
 	            html = '',
 	            max = this.collection.length;
@@ -43,6 +44,18 @@ WRK.library = (function () {
 	        }
 
 	        this.node.innerHTML = html;
+	        console.timeEnd('render template in app');
+
+	        console.time('render template');
+            var testData = this.collection;
+
+            dust.render("wrk-templates", testData, function(err, out) {
+                var elem = document.createElement('div');
+                elem.innerHTML = out;
+              document.querySelector('body').appendChild(elem);
+            });
+            console.timeEnd('render template');
+
 	        return true;
 	    },
 
