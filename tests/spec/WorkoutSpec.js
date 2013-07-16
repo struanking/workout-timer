@@ -151,6 +151,23 @@ describe('Workouts', function() {
 	    });
 	});
 
+	describe('Create an exercise', function() {
+		beforeEach(function() {
+			var data = {"name": "workout1"};
+	    	WRK.workout.create(data);
+			WRK.exercise.create(true);
+		});
+
+	    afterEach(function() {
+	        WRK.workouts.collection[0].deleteExercise(0);
+	        WRK.workouts.collection = [];
+	    });
+
+		it('Workout1 has a new exercise', function() {
+	    	expect(WRK.workouts.collection[0].exercises.length).toBe(1);
+	    });
+	});
+
 	describe('Add exercise to workout', function() {
 
 	    it('Workout1 has zero exercises', function() {

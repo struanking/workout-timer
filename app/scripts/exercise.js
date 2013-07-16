@@ -4,7 +4,7 @@
 */
 
 /* global
-    amplify: true, console: true
+    console: true
 */
 
 var WRK = WRK || {};
@@ -12,7 +12,15 @@ var WRK = WRK || {};
 WRK.exercise = (function () {
     'use strict';
 
-    var defaultExercise = {
+        var defaultExercise = {
+            "name": 'default',
+            "type": 'timed',
+            "sets": 1,
+            "rest": 0,
+            "restUnits": 'seconds'
+        },
+
+        defaults = {
             "name": 'default',
             "type": 'timed',
             "sets": 1,
@@ -33,6 +41,44 @@ WRK.exercise = (function () {
     //  Exercise (Timed, Repetition)
     //
     var Exercise2 = {
+
+        init: function (config) {
+            var data = config || {};
+            this.name = data.name || '';
+            this.type = data.type || '';
+            this.sets = data.sets || '';
+            this.rest = data.rest || '';
+            this.restUnits = data.restUnits || '';
+            return this;
+        },
+
+        set: {
+            name: function (value) {
+                this.name = value;
+            },
+
+            type: function (value) {
+                this.type = value;
+            },
+
+            sets: function (value) {
+                this.sets = value;
+            },
+
+            rest: function (value) {
+                this.rest = value;
+            },
+
+            restUnits: function (value) {
+                this.restUnits = value;
+            }
+        },
+
+        get: function (prop) {
+            return this[prop];
+        },
+
+
 
     };
 
@@ -89,13 +135,16 @@ WRK.exercise = (function () {
      * @Public
      */
     function createExercise(useDefault) {
-        var data = useDefault ? defaultExercise : formData(),
+        var config = useDefault ? defaultExercise : formData(),
             ex,
-            parentId = data.parentId,
-            index = parentId !== 'undefined' ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
-            obj = WRK.workouts.collection[index],
-            type = data.type;
+            parentId = config.parentId,
+            index = typeof(parentId) !== 'undefined' ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
+            obj = WRK.workouts.collection[index]
+            //,
+            //type = data.type
+            ;
 
+        /*
         switch (type) {
         case 'timed':
             ex = new TimedExercise(data);
@@ -106,7 +155,9 @@ WRK.exercise = (function () {
         default:
             console.log('No exercise type provided');
         }
+        */
 
+        ex = Object.create(Exercise2).init(config);
         obj.addExercise(ex);
     }
     

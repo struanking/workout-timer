@@ -16,21 +16,22 @@ WRK.workout = (function () {
      * @Private
      */
 
-    var Workout = {
+    var defaults = {
+        name: 'not-yet-set',
+        recoveryTime: 2,
+        rest: 2, //seconds
+        restUnits: 'seconds',
+        //this.time = data.time; //miliseconds - should be a function to calculate from exercises or updated whenever an exercise is added/removed/changed
+        exercises: []
+    };
 
-        defaults: {
-            name: 'not-yet-set',
-            recoveryTime: 2,
-            rest: 2, //seconds
-            restUnits: 'seconds',
-            //this.time = data.time; //miliseconds - should be a function to calculate from exercises or updated whenever an exercise is added/removed/changed
-            exercises: []
-        },
+    var Workout = {
 
         init: function (config) {
             var data = config || {},
-                defaults = this.defaults || {},
                 prop;
+            
+            defaults = defaults || {};
 
             // Loop through props in data and set on this - therefore any not there will assume the default value
             for (prop in data) {
@@ -44,6 +45,8 @@ WRK.workout = (function () {
                     this[prop] = defaults[prop];
                 }
             }
+
+            return this;
         },
 
         set: function (prop, value) {
@@ -74,12 +77,9 @@ WRK.workout = (function () {
     /* Create a new workout
      * @Public
      */
-    function createWorkout(config) {
-        var data = config || formData(),
-            workout;
-
-        workout = Object.create(Workout);
-        workout.init(data);
+    function createWorkout(data) {
+        var config = data || formData(),
+            workout = Object.create(Workout).init(config);
 
         if (!WRK.workouts) {
             WRK.library.createLibrary('workout');
