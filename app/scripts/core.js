@@ -2,7 +2,7 @@ var WRK = WRK || {},
 	doc = document;
 
 /*
- * Workouts
+ * Workout subscriptions
  */
 
 amplify.subscribe('workout-new', function () {
@@ -26,7 +26,7 @@ amplify.subscribe('workout-exercises-updated', function () {
 });
 
 /*
- * Exercises
+ * Exercise subscriptions
  */
 amplify.subscribe('exercise-new', function (parentId) {
 	// Activate exercise config
@@ -52,8 +52,11 @@ amplify.subscribe('exercise-collection-updated', function () {
 	WRK.exercise.detail();
 	WRK.exercise.library.refresh();
 });
-// End exercises
+// End exercise subscriptions
 
+/*
+ * Window event listeners and handlers
+ */
 WRK.util.addListener(window, 'click', function(ev) {
 	//console.log('Window click heard');
 	var elem = ev.target,

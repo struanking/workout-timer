@@ -1,12 +1,22 @@
+/*jshint
+    forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true,
+    undef:true, unused:true, curly:true, browser:true, indent:4, maxerr:50
+*/
+
+/* global
+    amplify: true, console: true
+*/
+
 var WRK = WRK || {};
 
 WRK.workout = (function () {
+    'use strict';
 
     /* Workout constructor
      * @Private
      */
 
-     var Workout = {
+    var Workout = {
 
         defaults: {
             name: 'not-yet-set',
@@ -17,16 +27,19 @@ WRK.workout = (function () {
             exercises: []
         },
 
-        init: function (data) {
-            var data = data || {},
-                defaults = this.defaults;
+        init: function (config) {
+            var data = config || {},
+                defaults = this.defaults || {},
+                prop;
 
             // Loop through props in data and set on this - therefore any not there will assume the default value
-            for (var prop in data) {
-                this[prop] = data[prop];
+            for (prop in data) {
+                if (data.hasOwnProperty(prop)) {
+                    this[prop] = data[prop];
+                }
             }
 
-            for (var prop in defaults) {
+            for (prop in defaults) {
                 if (!(prop in data) || !data[prop]) {
                     this[prop] = defaults[prop];
                 }
@@ -56,13 +69,13 @@ WRK.workout = (function () {
             exercises.splice(index, 1);
             amplify.publish('workout-exercises-updated');
         }
-     };
+    };
 
     /* Create a new workout
      * @Public
      */
-    function createWorkout(data) {
-        var data = data || formData(),
+    function createWorkout(config) {
+        var data = config || formData(),
             workout;
 
         workout = Object.create(Workout);
@@ -77,10 +90,9 @@ WRK.workout = (function () {
     }
 
     function detail(id) {
-        var id = +id || 0,
-            index = WRK.workouts.collection.findByProperty('id', +id),
+        var index = WRK.workouts.collection.findByProperty('id', +id || 0),
             obj = WRK.workouts.collection[index],
-            form = doc.querySelector('[data-js="workout-config"]');
+            form = document.querySelector('[data-js="workout-config"]');
 
         form.dataset.id = obj.get('id');
         form.querySelector('#workout-name').value = obj.get('name');
@@ -90,17 +102,20 @@ WRK.workout = (function () {
     }
 
     function update(id) {
-        var index = id ? WRK.workouts.collection.findByProperty('id', +id) : 0,
+        var index = WRK.workouts.collection.findByProperty('id', +id || 0),
+            data = formData(),
             obj = WRK.workouts.collection[index],
-            data = formData();
+            prop;
 
-        for (var prop in data) {
-            obj.set.call(obj, prop, data[prop]);
+        for (prop in data) {
+            if (data.hasOwnProperty(prop)) {
+                obj.set.call(obj, prop, data[prop]); // Call set method on the object with the context of the object itself
+            }
         }
     }
 
     function formData() {
-        var form = doc.querySelector('[data-js="workout-config"]'),
+        var form = document.querySelector('[data-js="workout-config"]'),
             data = {
                 "name": form.querySelector('#workout-name').value,
                 "recoveryTime": form.querySelector('#default-recovery-time').value,
@@ -114,6 +129,6 @@ WRK.workout = (function () {
         create: createWorkout,
         detail: detail,
         update: update
-    }
+    };
 
 }());

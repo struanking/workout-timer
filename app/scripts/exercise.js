@@ -1,6 +1,16 @@
+/*jshint
+    forin:true, noarg:true, noempty:true, eqeqeq:true, bitwise:true, strict:true,
+    undef:true, unused:true, curly:true, browser:true, indent:4, maxerr:50
+*/
+
+/* global
+    amplify: true, console: true
+*/
+
 var WRK = WRK || {};
 
 WRK.exercise = (function () {
+    'use strict';
 
     var defaultExercise = {
             "name": 'default',
@@ -22,8 +32,12 @@ WRK.exercise = (function () {
     // Constructors
     //  Exercise (Timed, Repetition)
     //
-    function Exercise(data) {
-        var data = data || {};
+    var Exercise2 = {
+
+    };
+
+    function Exercise(config) {
+        var data = config || {};
         this.name = data.name || '';
         this.type = data.type || '';
         this.sets = data.sets || '';
@@ -97,7 +111,7 @@ WRK.exercise = (function () {
     }
     
     function formData() {
-        var form = doc.querySelector('[data-js="exercise-config"]'),
+        var form = document.querySelector('[data-js="exercise-config"]'),
             data = {
                 "parentId": form.dataset.parentId,
                 "name": form.querySelector('#exercise-name').value,
@@ -110,12 +124,12 @@ WRK.exercise = (function () {
     }
 
     function exerciseDetail(id) {
-        var index = id ? WRK.exercise.library.collection.findByProperty('id', +id) : 0,
-            ex = this.library.collection[index],
-            form = doc.querySelector('[data-js="exercise-config"]');
+        var index = WRK.exercise.library.collection.findByProperty('id', +id || 0),
+            ex = WRK.exercise.library.collection[index],
+            form = document.querySelector('[data-js="exercise-config"]');
 
         form.dataset.id = ex.get('id');
-        form.querySelector('#exercise-name').value = this.titles[ex.get('name')];
+        form.querySelector('#exercise-name').value = titles[ex.get('name')];
         form.querySelector('#' + ex.get('type')).checked = 'checked';
         form.querySelector('#sets').value = ex.get('sets');
         form.querySelector('#rest-' + ex.get('restUnits')).checked = 'checked';
@@ -123,13 +137,15 @@ WRK.exercise = (function () {
     }
 
     function exerciseUpdate(id) {
-        var index = id ? WRK.exercise.library.collection.findByProperty('id', +id) : 0,
+        var index = WRK.exercise.library.collection.findByProperty('id', +id || 0),
             ex = WRK.exercise.library.collection[index],
             data = formData();
 
         for (var key in data) {
-            console.log('Set ' + key + ' = ' + data[key]);
-            ex.set[key].call(ex, data[key]);
+            if (data.hasOwnProperty(key)) {
+                console.log('Set ' + key + ' = ' + data[key]);
+                ex.set[key].call(ex, data[key]);
+            }
         }
     }
 
@@ -139,5 +155,5 @@ WRK.exercise = (function () {
         detail: exerciseDetail,
         titles: titles,
         update: exerciseUpdate
-    }
+    };
 }());
