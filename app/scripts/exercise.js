@@ -12,15 +12,7 @@ var WRK = WRK || {};
 WRK.exercise = (function () {
     'use strict';
 
-        var defaultExercise = {
-            "name": 'default',
-            "type": 'timed',
-            "sets": 1,
-            "rest": 0,
-            "restUnits": 'seconds'
-        },
-
-        defaults = {
+        var defaults = {
             "name": 'default',
             "type": 'timed',
             "sets": 1,
@@ -40,57 +32,40 @@ WRK.exercise = (function () {
     // Constructors
     //  Exercise (Timed, Repetition)
     //
-    var Exercise2 = {
+    var Exercise = {
 
         init: function (config) {
-            var data = config || {};
-            this.name = data.name || '';
-            this.type = data.type || '';
-            this.sets = data.sets || '';
-            this.rest = data.rest || '';
-            this.restUnits = data.restUnits || '';
+            var data = config || {},
+                prop;
+            
+            defaults = defaults || {};
+
+            // Loop through props in data and set on this - therefore any not there will assume the default value
+            for (prop in data) {
+                if (data.hasOwnProperty(prop)) {
+                    this[prop] = data[prop];
+                }
+            }
+
+            for (prop in defaults) {
+                if (!(prop in data) || !data[prop]) {
+                    this[prop] = defaults[prop];
+                }
+            }
+
             return this;
         },
 
-        set: {
-            name: function (value) {
-                this.name = value;
-            },
-
-            type: function (value) {
-                this.type = value;
-            },
-
-            sets: function (value) {
-                this.sets = value;
-            },
-
-            rest: function (value) {
-                this.rest = value;
-            },
-
-            restUnits: function (value) {
-                this.restUnits = value;
-            }
+        set: function (prop, value) {
+            this[prop] = value;
         },
 
         get: function (prop) {
             return this[prop];
-        },
-
-
-
+        }
     };
 
-    function Exercise(config) {
-        var data = config || {};
-        this.name = data.name || '';
-        this.type = data.type || '';
-        this.sets = data.sets || '';
-        this.rest = data.rest || '';
-        this.restUnits = data.restUnits || '';
-    }
-
+    /*
     Exercise.prototype.set = {
         name: function (value) {
             this.name = value;
@@ -130,34 +105,19 @@ WRK.exercise = (function () {
 
     RepetitionExercise.prototype = Object.create(Exercise.prototype);
     RepetitionExercise.constructor = RepetitionExercise;
+    */
 
     /* Create a new exercise
      * @Public
      */
-    function createExercise(useDefault) {
-        var config = useDefault ? defaultExercise : formData(),
+    function createExercise(useDefaults) {
+        var config = useDefaults ? {} : formData(),
             ex,
-            parentId = config.parentId,
+            parentId = config.parentId, // Could id be stored in the html to make accessing it easier?
             index = typeof(parentId) !== 'undefined' ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
-            obj = WRK.workouts.collection[index]
-            //,
-            //type = data.type
-            ;
+            obj = WRK.workouts.collection[index];
 
-        /*
-        switch (type) {
-        case 'timed':
-            ex = new TimedExercise(data);
-            break;
-        case 'repetition':
-            ex = new RepetitionExercise(data);
-            break;
-        default:
-            console.log('No exercise type provided');
-        }
-        */
-
-        ex = Object.create(Exercise2).init(config);
+        ex = Object.create(Exercise).init(config);
         obj.addExercise(ex);
     }
     
@@ -175,6 +135,7 @@ WRK.exercise = (function () {
     }
 
     function exerciseDetail(id) {
+        // Will become a template rendered with the exercise json data
         var index = WRK.exercise.library.collection.findByProperty('id', +id || 0),
             ex = WRK.exercise.library.collection[index],
             form = document.querySelector('[data-js="exercise-config"]');

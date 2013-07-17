@@ -85,11 +85,12 @@ WRK.workout = (function () {
             WRK.library.createLibrary('workout');
         }
 
-        WRK.workouts.add(workout); // To do: create a Library and add workout to it
+        WRK.workouts.add(workout);
         return workout;
     }
 
     function detail(id) {
+        // Will become a template rendered with the workout json data
         var index = WRK.workouts.collection.findByProperty('id', +id || 0),
             obj = WRK.workouts.collection[index],
             form = document.querySelector('[data-js="workout-config"]');
