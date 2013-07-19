@@ -110,7 +110,7 @@ WRK.exercise = (function () {
     /* Create a new exercise
      * @Public
      */
-    function createExercise(useDefaults) {
+    function exerciseCreate(useDefaults) {
         var config = useDefaults ? {} : formData(),
             ex,
             parentId = config.parentId, // Could id be stored in the html to make accessing it easier?
@@ -119,19 +119,6 @@ WRK.exercise = (function () {
 
         ex = Object.create(Exercise).init(config);
         obj.addExercise(ex);
-    }
-    
-    function formData() {
-        var form = document.querySelector('[data-js="exercise-config"]'),
-            data = {
-                "parentId": form.dataset.parentId,
-                "name": form.querySelector('#exercise-name').value,
-                "type": WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
-                "sets": form.querySelector('#sets').value,
-                "rest": form.querySelector('#rest').value,
-                "restUnits": WRK.util.getRadioValue(form.querySelectorAll('[name="rest-time"]'))
-            };
-        return data;
     }
 
     function exerciseDetail(id) {
@@ -160,10 +147,23 @@ WRK.exercise = (function () {
             }
         }
     }
+    
+    function formData() {
+        var form = document.querySelector('[data-js="exercise-config"]'),
+            data = {
+                "parentId": form.dataset.parentId,
+                "name": form.querySelector('#exercise-name').value,
+                "type": WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
+                "sets": form.querySelector('#sets').value,
+                "rest": form.querySelector('#rest').value,
+                "restUnits": WRK.util.getRadioValue(form.querySelectorAll('[name="rest-time"]'))
+            };
+        return data;
+    }
 
     return {
         //init: createLibrary,
-        create: createExercise,
+        create: exerciseCreate,
         detail: exerciseDetail,
         titles: titles,
         update: exerciseUpdate

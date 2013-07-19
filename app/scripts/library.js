@@ -36,7 +36,7 @@ WRK.library = (function () {
 		},
 
 		render: function () {
-			// This needs to be a template call
+			// This needs to be a template render
 			console.time('render template in app');
 			var collection = this.collection,
 				obj,
@@ -81,24 +81,13 @@ WRK.library = (function () {
 		}
 	};
 
-	function createLibrary (type) {
-		// Prob need to just init both library types either with zero data or with data from local storage
-		var library = Object.create(Library);
-
-		library.init(type);
-		
-		switch (type) {
-		case 'exercise':
-			// create library
-			break;
-		case 'workout':
-			WRK.workouts = library;
-			break;
-		}
+	function create () {
+		// Create and return a new Library object
+		return Object.create(Library);
 	}
 
 	return {
-		createLibrary: createLibrary 
+		create: create
 	};
 
 }());

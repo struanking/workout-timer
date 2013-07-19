@@ -128,3 +128,31 @@ WRK.util.addListener(window, 'click', function(ev) {
 		break;
 	}
 });
+
+
+/*
+ * Initialise the app
+ * - Check for local storage
+ * - Create workouts library
+ * - Create exercise library for each workout in local storage
+ */
+
+(function () {
+	// Initialise the global libraries and populate with local storage data if it exists
+	var WRK.workouts = WRK.library.create();
+
+	var WRK.exercises = WRK.library.create();
+
+	var localData = window.localStorage('WorkoutTimer');
+
+	if (localData) {
+		localData = JSON.parse(localData);
+		console.log('local data exists:', localData);
+
+		// For each workout in local data add to WRK.workouts
+		// Will child workout data be in json now?
+
+		// For each exercise in local data add to WRK.exercises
+	}
+
+}());

@@ -1,0 +1,22 @@
+<fieldset>
+    <p>
+        <label for="workout-name">Name:</label>
+        <input type="text" id="workout-name" value="{name}"/>
+    </p>
+    <p>
+        <label for="default-recovery-time">Default recovery time:</label>
+        <input type="text" id="default-recovery-time" value="{recoveryTime}"/>
+    </p>
+    <p>
+        <label for="rest">Default rest between sets:</label>
+        <input type="range" id="default-rest" min="0" max="60" step="10" value="{rest}"/>
+        
+        <br/>
+
+        <input type="radio" name="default-rest-units" id="default-rest-seconds" value="seconds" {}/>
+        <label for="default-rest-seconds">Seconds</label>
+
+        <input type="radio" name="default-rest-units" id="default-rest-minutes" value="minutes"/>
+        <label for="default-rest-minutes">Minutes</label>
+    </p>
+</fieldset>

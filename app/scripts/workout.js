@@ -77,19 +77,18 @@ WRK.workout = (function () {
     /* Create a new workout
      * @Public
      */
-    function createWorkout(data) {
+    function workoutCreate(data) {
         var config = data || formData(),
             workout = Object.create(Workout).init(config);
 
-        if (!WRK.workouts) {
-            WRK.library.createLibrary('workout');
-        }
+        WRK.workouts = WRK.workouts || WRK.library.create(); // Belt and braces because library should be initialised on page load
 
-        WRK.workouts.add(workout);
+        WRK.workouts.add(workout); // Add it to the global library
+
         return workout;
     }
 
-    function detail(id) {
+    function workoutDetail(id) {
         // Will become a template rendered with the workout json data
         var index = WRK.workouts.collection.findByProperty('id', +id || 0),
             obj = WRK.workouts.collection[index],
@@ -102,7 +101,7 @@ WRK.workout = (function () {
         form.querySelector('#default-rest').value = obj.get('rest');
     }
 
-    function update(id) {
+    function workoutUpdate(id) {
         var index = WRK.workouts.collection.findByProperty('id', +id || 0),
             data = formData(),
             obj = WRK.workouts.collection[index],
@@ -127,9 +126,9 @@ WRK.workout = (function () {
     }
 
     return {
-        create: createWorkout,
-        detail: detail,
-        update: update
+        create: workoutCreate,
+        detail: workoutDetail,
+        update: workoutUpdate
     };
 
 }());
