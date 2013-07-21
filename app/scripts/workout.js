@@ -57,11 +57,12 @@ WRK.workout = (function () {
             return this[prop];
         },
 
-        addExercise: function (ex) {
-            var exercises = this.exercises;
-            ex.id = (exercises && exercises.length > 0) ? exercises[exercises.length - 1].id + 1 : 0;
-            exercises.push(ex);
-            amplify.publish('workout-exercises-updated');
+        addExercise: function () {
+            // Move id calculation to utility
+            var exercises = this.exercises,
+                id = (exercises && exercises.length > 0) ? exercises[exercises.length - 1].id + 1 : 0;
+            exercises.push(id);
+            return id;
         },
 
         deleteExercise: function (id) {
@@ -81,24 +82,35 @@ WRK.workout = (function () {
         var config = data || formData(),
             workout = Object.create(Workout).init(config);
 
-        WRK.workouts = WRK.workouts || WRK.library.create(); // Belt and braces because library should be initialised on page load
+        WRK.workouts = WRK.workouts || WRK.library.create('workout'); // Belt and braces because library should be initialised on page load
 
         WRK.workouts.add(workout); // Add it to the global library
 
-        return workout;
+        return workout; // ?
     }
 
     function workoutDetail(id) {
         // Will become a template rendered with the workout json data
-        var index = WRK.workouts.collection.findByProperty('id', +id || 0),
-            obj = WRK.workouts.collection[index],
+        console.time('render workout config template');
+        var collection = WRK.workouts.collection,
+            index = collection.findByProperty('id', +id || 0),
+            data = collection[index],
             form = document.querySelector('[data-js="workout-config"]');
 
-        form.dataset.id = obj.get('id');
-        form.querySelector('#workout-name').value = obj.get('name');
-        form.querySelector('#default-recovery-time').value = obj.get('recoveryTime');
-        form.querySelector('#default-rest-' + obj.get('restUnits')).checked = 'checked';
-        form.querySelector('#default-rest').value = obj.get('rest');
+        dust.render("wrk-templates-form", data, function(err, output) {
+            form.querySelector('div').innerHTML = output;
+        });
+    }
+
+    function workoutConfig(name) {
+        var data = defaults,
+            form = document.querySelector('[data-js="workout-config"]');
+
+        data.name = name;
+
+        dust.render("wrk-templates-form", data, function(err, output) {
+            form.querySelector('div').innerHTML = output;
+        });
     }
 
     function workoutUpdate(id) {
@@ -126,6 +138,7 @@ WRK.workout = (function () {
     }
 
     return {
+        config: workoutConfig,
         create: workoutCreate,
         detail: workoutDetail,
         update: workoutUpdate

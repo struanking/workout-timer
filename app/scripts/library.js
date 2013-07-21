@@ -16,16 +16,20 @@ WRK.library = (function () {
 		collection: [],
 
 		init: function (type) {
+			console.log('init ' + type);
+			this.collection = [];
 			this.type = type;
 			this.node = document.createElement('fieldset');
 			this.node.dataset.js = type + '-collection-list';
+			return this;
 		},
 
 		add: function (obj) {
 			var collection = this.collection;
+			// Create a function in utility for this calculation
 			obj.id = (collection && collection.length > 0) ? collection[collection.length - 1].id + 1 : 0;
 			this.collection.push(obj);
-			amplify.publish('workout-collection-updated');
+			amplify.publish(this.type + '-collection-updated');
 		},
 
 		delete: function (id) {
@@ -36,54 +40,26 @@ WRK.library = (function () {
 		},
 
 		render: function () {
-			// This needs to be a template render
-			console.time('render template in app');
-			var collection = this.collection,
-				obj,
-				html = '',
-				max = collection.length;
-			
-			console.log('collection', this.collection);
-			
-			if (max > 0) {
-				html = '<ul>';
-				for (var i = 0; i < max; i += 1) {
-					obj = collection[i];
-					html += '<li><a href="#" data-js="' + this.type + '-detail" data-id="' + obj.get('id') + '">' + obj.get('name') + '</a></li>';
-				}
-				html += '</ul>';
-			} else {
-				html = '<p>No workouts</p>';
-			}
-
-			this.node.innerHTML = html;
-			console.timeEnd('render template in app');
-
-			console.time('render template');
-			var testData = this.collection;
-
-			dust.render("wrk-templates", testData, function(err, out) {
-				var elem = document.createElement('div');
-				elem.innerHTML = out;
-				document.querySelector('body').appendChild(elem);
+			var node = this.node;
+			dust.render("wrk-templates", this, function(err, output) {
+				node.innerHTML = output;
 			});
-			console.timeEnd('render template');
 
 			return true;
 		},
 
 		refresh: function () {
 			var container = document.querySelector('[data-js="' + this.type + '-collection"]');
-			this.render();
 			if (container) {
+				this.render();
 				container.appendChild(this.node);
 			}
 		}
 	};
 
-	function create () {
+	function create (type) {
 		// Create and return a new Library object
-		return Object.create(Library);
+		return Object.create(Library).init(type);
 	}
 
 	return {

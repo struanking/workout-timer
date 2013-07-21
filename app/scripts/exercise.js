@@ -65,60 +65,28 @@ WRK.exercise = (function () {
         }
     };
 
-    /*
-    Exercise.prototype.set = {
-        name: function (value) {
-            this.name = value;
-        },
-
-        type: function (value) {
-            this.type = value;
-        },
-
-        sets: function (value) {
-            this.sets = value;
-        },
-
-        rest: function (value) {
-            this.rest = value;
-        },
-
-        restUnits: function (value) {
-            this.restUnits = value;
-        }
-    };
-
-    Exercise.prototype.get = function (prop) {
-        return this[prop];
-    };
-
-    function TimedExercise(data) {
-        Exercise.call(this, data);
-    }
-
-    TimedExercise.prototype = Object.create(Exercise.prototype);
-    TimedExercise.constructor = TimedExercise;
-
-    function RepetitionExercise(data) {
-        Exercise.call(this, data);
-    }
-
-    RepetitionExercise.prototype = Object.create(Exercise.prototype);
-    RepetitionExercise.constructor = RepetitionExercise;
-    */
-
     /* Create a new exercise
      * @Public
      */
     function exerciseCreate(useDefaults) {
+        // Create exercise
+        // - add exercise object to WRK.exercises
+        // - add id to workout exercise collection
         var config = useDefaults ? {} : formData(),
             ex,
-            parentId = config.parentId, // Could id be stored in the html to make accessing it easier?
+            workoutId = config.workoutId, // Could id be stored in the html to make accessing it easier?
             index = typeof(parentId) !== 'undefined' ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
             obj = WRK.workouts.collection[index];
 
         ex = Object.create(Exercise).init(config);
-        obj.addExercise(ex);
+        console.log('workoutId = ' + workoutId);
+        console.log('index = ' + index);
+        
+        ex.id = obj.addExercise();
+
+        console.log('ex id = ' + ex.id);
+
+        WRK.exercises.add(ex);
     }
 
     function exerciseDetail(id) {
@@ -151,7 +119,7 @@ WRK.exercise = (function () {
     function formData() {
         var form = document.querySelector('[data-js="exercise-config"]'),
             data = {
-                "parentId": form.dataset.parentId,
+                "workoutId": form.dataset.workoutId,
                 "name": form.querySelector('#exercise-name').value,
                 "type": WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
                 "sets": form.querySelector('#sets').value,

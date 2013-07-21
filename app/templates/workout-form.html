@@ -1,4 +1,4 @@
-<fieldset>
+<fieldset data-js="workout-id" data-id="{id}">
     <p>
         <label for="workout-name">Name:</label>
         <input type="text" id="workout-name" value="{name}"/>
@@ -13,10 +13,21 @@
         
         <br/>
 
-        <input type="radio" name="default-rest-units" id="default-rest-seconds" value="seconds" {}/>
+        <input type="radio" name="default-rest-units" id="default-rest-seconds" value="seconds"{@eq key="{restUnits}" value="seconds"} checked="checked"{/eq}/>
         <label for="default-rest-seconds">Seconds</label>
 
-        <input type="radio" name="default-rest-units" id="default-rest-minutes" value="minutes"/>
+        <input type="radio" name="default-rest-units" id="default-rest-minutes" value="minutes"{@eq key="{restUnits}" value="minutes"} checked="checked"{/eq}/>
         <label for="default-rest-minutes">Minutes</label>
     </p>
+</fieldset>
+
+<p>
+    <a href="#" data-js="exercise-new">Add Exercise</a>
+</p>
+
+<fieldset>
+    <button data-js="workout-add-ready">Add</button>
+    <button data-js="workout-update-ready">Update</button>
+    <button data-js="workout-delete">Delete</button>
+    <button data-js="workout-start">Start</button>
 </fieldset>

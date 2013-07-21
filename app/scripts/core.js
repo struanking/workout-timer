@@ -24,11 +24,13 @@ amplify.subscribe('workout-create', function (name) {
 	// Activate workout config
 	doc.querySelector('[data-js="workout-config"]').focus();
 	doc.querySelector('[data-js="workout-config"]').style.borderColor = '#C00';
-	doc.querySelector('[data-js="workout-config"] #workout-name').value = name;
+	//doc.querySelector('[data-js="workout-config"] #workout-name').value = name;
+	WRK.workout.config(name);
 });
 
 amplify.subscribe('workout-collection-updated', function () {
 	'use strict';
+	console.log('heard that workouts collection has been updated');
 	WRK.workouts.refresh();
 });
 
@@ -41,13 +43,13 @@ amplify.subscribe('workout-exercises-updated', function () {
 /*
  * Exercise subscriptions
  */
-amplify.subscribe('exercise-new', function (parentId) {
+amplify.subscribe('exercise-new', function (workoutId) {
 	'use strict';
 
 	// Activate exercise config
 	var exConfig = doc.querySelector('[data-js="exercise-config"]');
 
-	exConfig.dataset.parentId = parentId;
+	exConfig.dataset.workoutId = workoutId;
 	exConfig.focus();
 	exConfig.style.borderColor = '#C00';
 
@@ -67,8 +69,8 @@ amplify.subscribe('exercise-new', function (parentId) {
 // Exercise: collection updated
 amplify.subscribe('exercise-collection-updated', function () {
 	'use strict';
-	WRK.exercise.detail();
-	WRK.exercise.library.refresh();
+	//WRK.exercise.detail();
+	//WRK.exercise.library.refresh();
 });
 // End exercise subscriptions
 
@@ -83,7 +85,9 @@ WRK.util.addListener(window, 'click', function(ev) {
 		eventType = elem.getAttribute('data-js'),
 		id,
 		name,
-		parentId;
+		workoutId;
+
+	console.log('eventType = ' + eventType);
 
 	if (eventType) {
 		ev.preventDefault();
@@ -91,7 +95,7 @@ WRK.util.addListener(window, 'click', function(ev) {
 
 	switch (eventType) {
 	case 'workout-detail':
-		WRK.workout.detail(elem.getAttribute('data-id'));
+		WRK.workout.detail(elem.dataset.id);
 		break;
 	case 'workout-new':
 		amplify.publish(eventType);
@@ -104,13 +108,17 @@ WRK.util.addListener(window, 'click', function(ev) {
 		WRK.workout.create();
 		break;
 	case 'workout-update-ready':
-		id = doc.querySelector('[data-js="workout-config"]').dataset.id; // or, use getId on object
+		id = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
 		WRK.workout.update(id);
 		amplify.publish('workout-collection-updated'); // may only need to update if name changed
 		break;
+	case 'workout-delete':
+		id = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
+		WRK.workouts.delete(id);
+		break;
 	case 'exercise-new':
-		parentId = doc.querySelector('[data-js="workout-config"]').dataset.id; // or, use getId on object
-		amplify.publish(eventType, parentId);
+		workoutId = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
+		amplify.publish(eventType, workoutId);
 		break;
 	case 'exercise-add-ready':
 		WRK.exercise.create();
@@ -124,7 +132,7 @@ WRK.util.addListener(window, 'click', function(ev) {
 		WRK.exercise.library.delete(id);
 		break;
 	case 'exercise-detail':
-		WRK.exercise.detail(elem.getAttribute('data-id'));
+		WRK.exercise.detail(elem.dataset.id);
 		break;
 	}
 });
@@ -139,12 +147,15 @@ WRK.util.addListener(window, 'click', function(ev) {
 
 (function () {
 	// Initialise the global libraries and populate with local storage data if it exists
-	var WRK.workouts = WRK.library.create();
+	WRK.workouts = WRK.library.create('workout');
 
-	var WRK.exercises = WRK.library.create();
+	WRK.exercises = WRK.library.create('exercise');
 
-	var localData = window.localStorage('WorkoutTimer');
+	amplify.publish('workout-collection-updated');
 
+	//var localData = window.localStorage.WorkoutTimer;
+
+	/*
 	if (localData) {
 		localData = JSON.parse(localData);
 		console.log('local data exists:', localData);
@@ -154,5 +165,5 @@ WRK.util.addListener(window, 'click', function(ev) {
 
 		// For each exercise in local data add to WRK.exercises
 	}
-
+	*/
 }());
