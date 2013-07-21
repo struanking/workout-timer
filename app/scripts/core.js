@@ -81,7 +81,8 @@ WRK.util.addListener(window, 'click', function(ev) {
 	'use strict';
 
 	//console.log('Window click heard');
-	var elem = ev.target,
+	var data,
+		elem = ev.target,
 		eventType = elem.getAttribute('data-js'),
 		id,
 		name,
@@ -115,6 +116,10 @@ WRK.util.addListener(window, 'click', function(ev) {
 	case 'workout-delete':
 		id = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
 		WRK.workouts.delete(id);
+		break;
+	case 'workout-start':
+		id = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
+		console.log('Create timer for workout id ' + id);
 		break;
 	case 'exercise-new':
 		workoutId = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
