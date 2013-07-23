@@ -1,0 +1,1 @@
+(function(){dust.register("wrk-exercise-list",body_0);function body_0(chk,ctx){return chk.write("<li><a href=\"#\" data-js=\"").reference(ctx.get("type"),ctx,"h").write("-detail\" data-id=\"").reference(ctx.get("id"),ctx,"h").write("\">").reference(ctx.get("name"),ctx,"h").write("</a></li>\n");}return body_0;})();

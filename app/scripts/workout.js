@@ -58,8 +58,14 @@ WRK.workout = (function () {
         },
 
         addExercise: function () {
-            var id = WRK.util.nextId(this.exercises);
-            this.exercises.push(id);
+            // Move id calculation to utility
+            var exerciseLibrary = WRK.exercises.collection,
+                exercisesInWorkout = this.exercises,
+                id = (exerciseLibrary && exerciseLibrary.length > 0) ? exerciseLibrary[exerciseLibrary.length - 1].id + 1 : 0;
+
+                console.log('id = ' + id);
+
+            exercisesInWorkout.push(id);
             return id;
         },
 
