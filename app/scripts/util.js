@@ -23,6 +23,29 @@ WRK.util = {
 				return radioGroup[i].value;
 			}
 		}
+	},
+
+	nextId: function (obj) {
+		return (obj && obj.length > 0) ? obj[obj.length - 1].id + 1 : 0;
+	},
+
+	namespace: function (ns, ns_string) {
+	    var parts = ns_string.split('.'),
+	        parent = ns;
+
+	    if (parts[0] === 'WRK') {
+	        parts = parts.slice(1);
+	    }
+
+	    for (var i = 0, length = parts.length; i < length; i += 1) {
+	        //create a property if it doesnt exist
+	        if (typeof parent[parts[i]] === 'undefined') {
+	            parent[parts[i]] = {};
+	        }
+	        parent = parent[parts[i]];
+	    }
+
+	    return parent;
 	}
 };
 

@@ -72,27 +72,23 @@ WRK.exercise = (function () {
         // Create exercise
         // - add exercise object to WRK.exercises
         // - add id to workout exercise collection
-        var config = useDefaults ? {} : formData(),
+        var collection = WRK.workouts.collection,
+            config = useDefaults ? {} : formData(),
             ex,
-            workoutId = config.workoutId, // Could id be stored in the html to make accessing it easier?
-            index = typeof(parentId) !== 'undefined' ? WRK.workouts.collection.findByProperty('id', +parentId) : 0,
-            obj = WRK.workouts.collection[index];
+            index = collection.findByProperty('id', +config.workoutId || 0);
 
         ex = Object.create(Exercise).init(config);
-        console.log('workoutId = ' + workoutId);
-        console.log('index = ' + index);
         
-        ex.id = obj.addExercise();
-
-        console.log('ex id = ' + ex.id);
+        ex.id = collection[index].addExercise();
 
         WRK.exercises.add(ex);
     }
 
     function exerciseDetail(id) {
         // Will become a template rendered with the exercise json data
-        var index = WRK.exercise.library.collection.findByProperty('id', +id || 0),
-            ex = WRK.exercise.library.collection[index],
+        var collection = WRK.exercise.library.collection,
+            index = collection.findByProperty('id', +id || 0),
+            ex = collection[index],
             form = document.querySelector('[data-js="exercise-config"]');
 
         form.dataset.id = ex.get('id');

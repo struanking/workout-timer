@@ -25,15 +25,14 @@ WRK.library = (function () {
 		},
 
 		add: function (obj) {
-			var collection = this.collection;
-			// Create a function in utility for this calculation
-			obj.id = (collection && collection.length > 0) ? collection[collection.length - 1].id + 1 : 0;
+			obj.id = WRK.util.nextId(this.collection);
 			this.collection.push(obj);
 			amplify.publish(this.type + '-collection-updated');
 		},
 
 		delete: function (id) {
 			var index = this.collection.findByProperty('id', +id);
+
 			console.log('Heard delete request for: ' + id + ', index = ' + index + ', collection', this.collection);
 			this.collection.splice(index, 1);
 			amplify.publish(this.type + '-collection-updated');
@@ -41,6 +40,7 @@ WRK.library = (function () {
 
 		render: function () {
 			var node = this.node;
+
 			dust.render("wrk-templates", this, function(err, output) {
 				node.innerHTML = output;
 			});
@@ -50,6 +50,7 @@ WRK.library = (function () {
 
 		refresh: function () {
 			var container = document.querySelector('[data-js="' + this.type + '-collection"]');
+			
 			if (container) {
 				this.render();
 				container.appendChild(this.node);

@@ -67,7 +67,7 @@ describe('Workouts', function() {
     
     describe('Init checks', function() {
     	it('There are zero workouts', function() {
-    		expect(WRK.workouts).toBe(undefined);
+    		expect(WRK.workouts.collection.length).toBe(0);
     	});
     });
 

@@ -7,9 +7,9 @@
 	console: true
 */
 
-var WRK = WRK || {};
+var timer = WRK.util.namespace(WRK, 'WRK.workout.timer');
 
-WRK.timer = (function () {
+timer = (function () {
 	'use strict';
 
 	var Timer = {

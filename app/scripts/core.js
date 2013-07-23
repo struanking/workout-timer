@@ -10,6 +10,8 @@
 var WRK = WRK || {},
 	doc = document;
 
+// Create a main or core sub-module and put everything from here in there?
+
 /*
  * Workout subscriptions
  */
