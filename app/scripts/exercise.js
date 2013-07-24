@@ -69,9 +69,8 @@ WRK.exercise = (function () {
      * @Public
      */
     function exerciseCreate(useDefaults) {
-        // Create exercise
-        // - add exercise object to WRK.exercises
-        // - add id to workout exercise collection
+        // - create exercise
+        // - add exercise object to workout exercise collection
         var collection = WRK.workouts.collection,
             config = useDefaults ? {} : formData(),
             ex,
@@ -79,9 +78,7 @@ WRK.exercise = (function () {
 
         ex = Object.create(Exercise).init(config);
         
-        ex.id = collection[index].addExercise();
-
-        WRK.exercises.add(ex);
+        collection[index].addExercise(ex);
     }
 
     function exerciseDetail(id) {
@@ -126,7 +123,6 @@ WRK.exercise = (function () {
     }
 
     return {
-        //init: createLibrary,
         create: exerciseCreate,
         detail: exerciseDetail,
         titles: titles,

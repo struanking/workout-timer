@@ -57,16 +57,19 @@ WRK.workout = (function () {
             return this[prop];
         },
 
-        addExercise: function () {
+        addExercise: function (ex) {
             // Move id calculation to utility
-            var exerciseLibrary = WRK.exercises.collection,
-                exercisesInWorkout = this.exercises,
-                id = (exerciseLibrary && exerciseLibrary.length > 0) ? exerciseLibrary[exerciseLibrary.length - 1].id + 1 : 0;
+            var exercises = this.exercises,
+                id = (exercises && exercises.length > 0) ? exercises[exercises.length - 1].id + 1 : 0;
 
                 console.log('id = ' + id);
 
-            exercisesInWorkout.push(id);
-            return id;
+            ex.id = id;
+
+            exercises.push(ex);
+
+            amplify.publish('workout-exercises-updated');
+            
         },
 
         deleteExercise: function (id) {

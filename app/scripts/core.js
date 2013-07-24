@@ -156,8 +156,6 @@ WRK.util.addListener(window, 'click', function(ev) {
 	// Initialise the global libraries and populate with local storage data if it exists
 	WRK.workouts = WRK.library.create('workout');
 
-	WRK.exercises = WRK.library.create('exercise');
-
 	amplify.publish('workout-collection-updated');
 
 	//var localData = window.localStorage.WorkoutTimer;
