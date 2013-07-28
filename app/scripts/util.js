@@ -29,7 +29,44 @@ WRK.util = {
 		return (obj && obj.length > 0) ? obj[obj.length - 1].id + 1 : 0;
 	},
 
-	namespace: function (ns, ns_string) {
+	timeCalc: function (value, units) {
+		value *= 1; // Ensure it's a number
+		return units === 'minutes' ? value * 60 : value;
+	},
+
+	timeFriendlyFormat: function (value) {
+		var t1,
+			t2,
+			timeFriendlyFormat;
+
+		switch (true) {
+		case value > 60:
+			t1 = Math.floor(value / 60) + ' Minutes';
+			t2 = value % 60;
+
+			if (t2 > 0) {
+				t2 += t2 === 1 ? ' Second' : ' Seconds';
+				t2 = ' ' + t2;
+			} else {
+				t2 = '';
+			}
+
+			timeFriendlyFormat = t1 + t2;
+			break;
+		
+		case value === 60:
+			timeFriendlyFormat = '1 minute';
+			break;
+
+		default:
+			timeFriendlyFormat = value + ' Seconds';
+			break;
+		}
+
+		return timeFriendlyFormat;
+	}
+
+/*	namespace: function (ns, ns_string) {
 	    var parts = ns_string.split('.'),
 	        parent = ns;
 
@@ -46,7 +83,7 @@ WRK.util = {
 	    }
 
 	    return parent;
-	}
+	}*/
 };
 
 (function() {

@@ -68,16 +68,14 @@ WRK.workout = (function () {
 
             exercises.push(ex);
 
-            amplify.publish('workout-exercises-updated');
+            amplify.publish('workout-exercises-updated', this.id);
             
         },
 
-        deleteExercise: function (id) {
-            var exercises = this.exercises,
-                index = exercises.findByProperty('id', +id);
+        deleteExercise: function (index) {
+            //console.log('Heard delete request for: ' + id + ', index = ' + index + ', collection', exercises);
+            this.exercises.splice(index, 1);
 
-            console.log('Heard delete request for: ' + id + ', index = ' + index + ', collection', exercises);
-            exercises.splice(index, 1);
             amplify.publish('workout-exercises-updated');
         }
     };
@@ -97,16 +95,15 @@ WRK.workout = (function () {
     }
 
     function workoutDetail(id) {
-        // Will become a template rendered with the workout json data
         console.time('render workout config template');
         var collection = WRK.workouts.collection,
             index = collection.findByProperty('id', +id || 0),
-            data = collection[index],
-            form = document.querySelector('[data-js="workout-config"]');
+            data = collection[index];
 
-        dust.render("wrk-templates-form", data, function(err, output) {
-            form.querySelector('div').innerHTML = output;
+        dust.render("workout-form", data, function(err, output) {
+            document.querySelector('[data-js="workout-config"] div').innerHTML = output;
         });
+        console.timeEnd('render workout config template');
     }
 
     function workoutConfig(name) {
@@ -115,7 +112,7 @@ WRK.workout = (function () {
 
         data.name = name;
 
-        dust.render("wrk-templates-form", data, function(err, output) {
+        dust.render("workout-form", data, function(err, output) {
             form.querySelector('div').innerHTML = output;
         });
     }

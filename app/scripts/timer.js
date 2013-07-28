@@ -7,25 +7,30 @@
 	console: true
 */
 
-var timer = WRK.util.namespace(WRK, 'WRK.workout.timer');
+WRK = WRK || {};
 
-timer = (function () {
+WRK.timer = (function () {
 	'use strict';
 
-	var Timer = {
+	var timer2;
 
-		init: function () {
+	function Timer(workout) {
+		this.exNum = -1;
+		return this;
+	}
 
-		},
+	Timer.prototype = {
 
 		start: function () {
+			var exercises = this.workout.exercises;
+
 			if (this.exNum === -1) {
 				console.log('Starting workout');
 				//console.log('Workout name = ' + this.name);
 				//console.log('Total time = ' + this.time);
 				//console.log('Default recovery = ' + this.defaultRecovery);
-				this.duration = this.totalTime();
-				console.log('Workout total = ' + this.duration);
+				//this.duration = this.totalTime();
+				//console.log('Workout total = ' + this.duration);
 			}
 
 			if (this.exercises[this.exNum] && !this.exercises[this.exNum].recoveryTaken) {
@@ -37,7 +42,7 @@ timer = (function () {
 
 				if (this.exNum === this.exercises.length) {
 					console.log('Finished workout');
-					document.getElementById('time').innerHTML = 'Workout Finished';
+					//document.getElementById('time').innerHTML = 'Workout Finished';
 				} else {
 					var ex = this.exercises[this.exNum];
 					var self = this;
@@ -46,24 +51,29 @@ timer = (function () {
 					ex.recovery = ex.recovery || this.defaultRecovery;
 					ex.recoveryUnits = ex.recoveryUnits || this.defaultRecoveryUnits;
 					
-					document.getElementById('timer').innerHTML = $.render.timerTemplate(this);
+					//document.getElementById('timer').innerHTML = $.render.timerTemplate(this);
 					
-					WRK.util.addListener(document.getElementById('workout-pause'), 'click', function(ev) {
+					/*WRK.util.addListener(document.getElementById('workout-pause'), 'click', function(ev) {
 						self.pause(ev);
-					});
+					});*/
 					
-					this.countdown(time);
+					this.countdown(+time);
 				}
 			}
 		},
 
 		totalTime: function () {
-			var exercises = this.exercises,
-				total = 0;
+			var ex,
+				exercises = this.workout.exercises,
+				timeFriendlyFormat,
+				total = 0,
+				t1,
+				t2;
 
 			for (var i = 0, len = exercises.length; i < len; i += 1) {
-				total += exercises[i].time;
-				total += exercises[i].recovery || this.defaultRecovery;
+				ex = exercises[i];
+				total += WRK.util.timeCalc(ex.time, ex.timeUnits);
+				total += WRK.util.timeCalc(ex.rest, ex.restUnits);
 			}
 
 			return total;
@@ -81,7 +91,7 @@ timer = (function () {
 				console.log('Pause timer');
 				this.paused = true;
 				document.getElementById('workout-pause').innerHTML = 'Continue';
-				clearTimeout(timer);
+				clearTimeout(timer2);
 			}
 		},
 
@@ -91,10 +101,11 @@ timer = (function () {
 		},
 
 		countdown: function (t) {
-			//console.log('Countdown: ' + t);
+			console.log('Countdown: ' + t);
 			var self = this;
 			this.pausedTime = t;
-			document.getElementById('time').innerHTML = t.toHHMMSS();
+			
+			//document.getElementById('time').innerHTML = t.toHHMMSS();
 
 			/*
 			if (t === 1 && this.inRecoveryMode) {
@@ -102,13 +113,15 @@ timer = (function () {
 			}
 			*/
 
-			timer = setTimeout(function() {
+			timer2 = setTimeout(function() {
 				if (t === 0) {
+					// Start next exercise
 					self.start();
 				} else {
-					var workoutCountdown = document.querySelector('#duration span');
+					console.log('self.duration = ' + self.duration);
+					//var workoutCountdown = document.querySelector('#duration span');
 					self.duration = self.duration - 1;
-					workoutCountdown.innerHTML = self.duration.toHHMMSS();
+					//workoutCountdown.innerHTML = self.duration.toHHMMSS();
 					self.countdown(t - 1);
 				}
 			}, 1000);
@@ -126,12 +139,34 @@ timer = (function () {
 		}
 	};
 
-	function init() {
+	function createTimer(workout) {
+	    console.log('timer2 ' + typeof(timer2));
 		// Create timer object
+		var wrktimer = new Timer();
+
+		// Copy properties
+		for (var key in workout) {
+			if (workout.hasOwnProperty(key)) {
+				wrktimer[key] = workout[key];
+			}
+		}
+
+		console.log('wrktimer:', wrktimer);
+
+		wrktimer.workout = workout;
+		wrktimer.duration = wrktimer.totalTime();
+		wrktimer.timeFriendly = WRK.util.timeFriendlyFormat(wrktimer.duration);
+
+		console.log('Total time = ' + wrktimer.duration);
+		console.log('Time friendly = ' + wrktimer.timeFriendly);
+
+		return wrktimer;
+
+		// Render timer interface
 	}
 
 	return {
-		init: init
+		create: createTimer
 	};
 
 }());

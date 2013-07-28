@@ -1,0 +1,54 @@
+<fieldset data-js="exercise-id" data-ex-id="{id}">
+    <p>
+        <label for="name">Name:</label>
+        <select id="exercise-name">
+        {#titles}
+            <option value="{.}" {@eq key="{name}" value="{.}"} selected{/eq}>{.}</option>
+        {/titles}        
+        </select>
+    </p>
+    <p>
+        <label for="type">Type:</label>
+        <input type="radio" name="type" id="timed" value="timed" {@eq key="{type}" value="timed"} checked="checked"{/eq}/>
+        <label for="timed">Timed</label>
+
+        <input type="radio" name="type" id="repetition" value="repetition" {@eq key="{type}" value="repetition"} checked="checked"{/eq}/>
+        <label for="repetition">Repetition</label>
+    </p>
+
+    <p>
+        <label for="time">Time:</label>
+        <input type="number" id="time" min="0" max="100" step="1" value="{time}"/>
+        
+        <br/>
+
+        <input type="radio" name="time-units" id="time-seconds" value="seconds" {@eq key="{timeUnits}" value="seconds"} checked="checked"{/eq}/>
+        <label for="time-seconds">Seconds</label>
+
+        <input type="radio" name="time-units" id="time-minutes" value="minutes" {@eq key="{timeUnits}" value="minutes"} checked="checked"{/eq}/>
+        <label for="time-minutes">Minutes</label>
+    </p>
+
+    <p>
+        <label for="sets">Sets:</label>
+        <input type="number" id="sets" min="0" max="100" step="1" value="{sets}"/>
+    </p>
+
+    <p>
+        <label for="rest">Rest between sets:</label>
+        <input type="range" id="rest" min="0" max="60" step="10" value="{rest}"/>
+        
+        <br/>
+
+        <input type="radio" name="rest-units" id="rest-seconds" value="seconds" {@eq key="{restUnits}" value="seconds"} checked="checked"{/eq}/>
+        <label for="rest-seconds">Seconds</label>
+
+        <input type="radio" name="rest-units" id="rest-minutes" value="minutes" {@eq key="{restUnits}" value="minutes"} checked="checked"{/eq}/>
+        <label for="rest-minutes">Minutes</label>
+    </p>
+</fieldset>
+<fieldset>
+    <button data-js="exercise-add-ready">Add</button>
+    <button data-js="exercise-update-ready">Update</button>
+    <button data-js="exercise-delete">Delete</button>
+</fieldset>

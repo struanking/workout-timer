@@ -20,13 +20,13 @@ WRK.exercise = (function () {
             "restUnits": 'seconds'
         },
 
-        titles = {
-            e1: 'Squats',
-            e2: 'Sit-ups',
-            e3: 'Press-ups',
-            e4: 'Plank',
-            e5: 'Mountain Climbers'
-        };
+        titles = [
+            'Squats',
+            'Sit-ups',
+            'Press-ups',
+            'Plank',
+            'Mountain Climbers'
+        ];
 
     //
     // Constructors
@@ -81,49 +81,76 @@ WRK.exercise = (function () {
         collection[index].addExercise(ex);
     }
 
-    function exerciseDetail(id) {
-        // Will become a template rendered with the exercise json data
-        var collection = WRK.exercise.library.collection,
-            index = collection.findByProperty('id', +id || 0),
-            ex = collection[index],
-            form = document.querySelector('[data-js="exercise-config"]');
-
-        form.dataset.id = ex.get('id');
-        form.querySelector('#exercise-name').value = titles[ex.get('name')];
-        form.querySelector('#' + ex.get('type')).checked = 'checked';
-        form.querySelector('#sets').value = ex.get('sets');
-        form.querySelector('#rest-' + ex.get('restUnits')).checked = 'checked';
-        form.querySelector('#rest').value = ex.get('rest');
+    function exerciseDelete(workoutId, id) {
+        var collection = WRK.workouts.collection,
+            index = collection.findByProperty('id', +workoutId || 0),
+            exIndex = collection[index].exercises.findByProperty('id', +id || 0);
+        
+        collection[index].deleteExercise(exIndex);
     }
 
-    function exerciseUpdate(id) {
-        var index = WRK.exercise.library.collection.findByProperty('id', +id || 0),
-            ex = WRK.exercise.library.collection[index],
+    function exerciseDetail(workoutId, id) {
+        console.time('render exercise config template');
+        var collection = WRK.workouts.collection,
+            index = collection.findByProperty('id', +workoutId || 0),
+            exIndex = collection[index].exercises.findByProperty('id', +id || 0),
+            data = collection[index].exercises[exIndex];
+
+        dust.render("exercise-form", data, function(err, output) {
+            document.querySelector('[data-js="exercise-config"] div').innerHTML = output;
+        });
+    }
+
+    function exerciseUpdate(workoutId, id) {
+        var collection = WRK.workouts.collection,
+            index = collection.findByProperty('id', +workoutId || 0),
+            exIndex = collection[index].exercises.findByProperty('id', +id || 0),
+            ex = collection[index].exercises[exIndex],
             data = formData();
+
+        console.log('ex:', ex);
 
         for (var key in data) {
             if (data.hasOwnProperty(key)) {
                 console.log('Set ' + key + ' = ' + data[key]);
-                ex.set[key].call(ex, data[key]);
+                //ex.set[key].call(ex, data[key]);
+                ex.set(key, data[key]);
             }
         }
+    }
+
+    function exerciseConfig(workoutId) {
+        var data = defaults,
+            form = document.querySelector('[data-js="exercise-config"]');
+
+        data.titles = titles;
+        data.workoutId = workoutId;
+
+        dust.render("exercise-form", data, function(err, output) {
+            form.querySelector('div').innerHTML = output;
+        });
     }
     
     function formData() {
         var form = document.querySelector('[data-js="exercise-config"]'),
             data = {
-                "workoutId": form.dataset.workoutId,
+                //"workoutId": form.querySelector('[data-js="exercise-id"]').dataset.workoutId,
+                "workoutId": document.querySelector('[data-js="workout-id"]').dataset.id,
                 "name": form.querySelector('#exercise-name').value,
                 "type": WRK.util.getRadioValue(form.querySelectorAll('[name="type"]')),
+                "time": form.querySelector('#time').value,
+                "timeUnits": WRK.util.getRadioValue(form.querySelectorAll('[name="time-units"]')),
                 "sets": form.querySelector('#sets').value,
                 "rest": form.querySelector('#rest').value,
-                "restUnits": WRK.util.getRadioValue(form.querySelectorAll('[name="rest-time"]'))
+                "restUnits": WRK.util.getRadioValue(form.querySelectorAll('[name="rest-units"]'))
             };
         return data;
     }
 
     return {
+        config: exerciseConfig,
         create: exerciseCreate,
+        delete: exerciseDelete,
         detail: exerciseDetail,
         titles: titles,
         update: exerciseUpdate

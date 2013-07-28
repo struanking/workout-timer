@@ -7,6 +7,10 @@
 	amplify: true, console: true
 */
 
+/*_.templateSettings = {
+  interpolate : /\{\{(.+?)\}\}/g
+};*/
+
 var WRK = WRK || {},
 	doc = document;
 
@@ -23,23 +27,22 @@ amplify.subscribe('workout-new', function () {
 
 amplify.subscribe('workout-create', function (name) {
 	'use strict';
-	// Activate workout config
-	doc.querySelector('[data-js="workout-config"]').focus();
-	doc.querySelector('[data-js="workout-config"]').style.borderColor = '#C00';
-	//doc.querySelector('[data-js="workout-config"] #workout-name').value = name;
 	WRK.workout.config(name);
 });
 
-amplify.subscribe('workout-collection-updated', function () {
+amplify.subscribe('workout-collection-updated', function (workoutId) {
 	'use strict';
-	console.log('heard that workouts collection has been updated');
+	console.log('heard that workouts collection has been updated with workout ' + workoutId);
 	WRK.workouts.refresh();
+	WRK.workout.detail(workoutId);
+
 });
 
-amplify.subscribe('workout-exercises-updated', function () {
+amplify.subscribe('workout-exercises-updated', function (workoutId) {
 	'use strict';
 	console.log('Heard workout-exercises-updated');
-	// refresh workout
+	// trigger refresh of exercise list in workout
+	WRK.workout.detail(workoutId);
 });
 
 /*
@@ -47,25 +50,7 @@ amplify.subscribe('workout-exercises-updated', function () {
  */
 amplify.subscribe('exercise-new', function (workoutId) {
 	'use strict';
-
-	// Activate exercise config
-	var exConfig = doc.querySelector('[data-js="exercise-config"]');
-
-	exConfig.dataset.workoutId = workoutId;
-	exConfig.focus();
-	exConfig.style.borderColor = '#C00';
-
-	var //select = doc.documentFragment('exercise-name'),
-		titles = WRK.exercise.titles,
-		html = '';
-
-	for (var key in titles) {
-		if (titles.hasOwnProperty(key)) {
-			html += '<option value="' + key + '">' + titles[key] + '</select>';
-		}
-	}
-
-	doc.querySelector('#exercise-name').innerHTML = html;
+	WRK.exercise.config(workoutId);
 });
 
 // Exercise: collection updated
@@ -73,6 +58,7 @@ amplify.subscribe('exercise-collection-updated', function () {
 	'use strict';
 	//WRK.exercise.detail();
 	//WRK.exercise.library.refresh();
+	console.log('Heard exercise collection updated');
 });
 // End exercise subscriptions
 
@@ -113,7 +99,7 @@ WRK.util.addListener(window, 'click', function(ev) {
 	case 'workout-update-ready':
 		id = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
 		WRK.workout.update(id);
-		amplify.publish('workout-collection-updated'); // may only need to update if name changed
+		amplify.publish('workout-collection-updated', id); // may only need to update if name changed
 		break;
 	case 'workout-delete':
 		id = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
@@ -122,6 +108,10 @@ WRK.util.addListener(window, 'click', function(ev) {
 	case 'workout-start':
 		id = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
 		console.log('Create timer for workout id ' + id);
+		var index = WRK.workouts.collection.findByProperty('id', +id || 0),
+            obj = WRK.workouts.collection[index];
+        console.log('obj', obj);
+		WRK.timer.create(obj);
 		break;
 	case 'exercise-new':
 		workoutId = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
@@ -131,19 +121,21 @@ WRK.util.addListener(window, 'click', function(ev) {
 		WRK.exercise.create();
 		break;
 	case 'exercise-update-ready':
-		id = doc.querySelector('[data-js="exercise-config"]').dataset.id; // or, use getId on object
-		WRK.exercise.update(id);
+		workoutId = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
+		id = doc.querySelector('[data-js="exercise-id"]').dataset.exId; // or, use getId on object
+		WRK.exercise.update(workoutId, id);
 		break;
 	case 'exercise-delete':
-		id = doc.querySelector('[data-js="exercise-config"]').dataset.id; // or, use getId on object
-		WRK.exercise.library.delete(id);
+		workoutId = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
+		id = doc.querySelector('[data-js="exercise-id"]').dataset.exId; // or, use getId on object
+		WRK.exercise.delete(workoutId, id);
 		break;
 	case 'exercise-detail':
-		WRK.exercise.detail(elem.dataset.id);
+		workoutId = doc.querySelector('[data-js="workout-id"]').dataset.id; // or, use getId on object
+		WRK.exercise.detail(workoutId, elem.dataset.exId);
 		break;
 	}
 });
-
 
 /*
  * Initialise the app

@@ -1,0 +1,1 @@
+(function(){dust.register("exercise-list",body_0);function body_0(chk,ctx){return chk.write("<li><a href=\"#\" data-js=\"exercise-detail\" data-ex-id=\"").reference(ctx.get("id"),ctx,"h").write("\">").reference(ctx.get("name"),ctx,"h").write("</a></li>\n");}return body_0;})();
