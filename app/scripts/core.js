@@ -164,3 +164,22 @@ WRK.util.addListener(window, 'click', function(ev) {
 	}
 	*/
 }());
+
+
+/*
+ * To Do list
+ * ----------
+ *
+ * Store active workout in a variable so it's easier to access e.g. WRK.activeWorkout
+ * countdown clock to be a namespace variable e.g. WRK.timer.clock to avoid undefined error in log
+ * Change Object.create back to new ??
+ * Underscore template or dust?
+ * Timer markup
+ * Add more properties
+ * Review pub/sub setup
+ * Setup sass
+ * Setup template compile in grunt
+ * Merge detail and config functions for Workout and Exercise
+ * Update only changed properties
+ * Refresh only changed elements
+ */

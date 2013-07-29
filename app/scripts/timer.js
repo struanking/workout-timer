@@ -12,7 +12,7 @@ WRK = WRK || {};
 WRK.timer = (function () {
 	'use strict';
 
-	var timer2;
+	var clock;
 
 	function Timer(workout) {
 		this.exNum = -1;
@@ -47,16 +47,16 @@ WRK.timer = (function () {
 					var ex = this.exercises[this.exNum];
 					var self = this;
 					var time = ex.time;
-					
+
 					ex.recovery = ex.recovery || this.defaultRecovery;
 					ex.recoveryUnits = ex.recoveryUnits || this.defaultRecoveryUnits;
-					
+
 					//document.getElementById('timer').innerHTML = $.render.timerTemplate(this);
-					
+
 					/*WRK.util.addListener(document.getElementById('workout-pause'), 'click', function(ev) {
 						self.pause(ev);
 					});*/
-					
+
 					this.countdown(+time);
 				}
 			}
@@ -81,7 +81,7 @@ WRK.timer = (function () {
 
 		pause: function (ev) {
 			WRK.util.preventDefaultStopPropagtion(ev);
-			
+
 			if (this.paused) {
 				console.log('Restarting timer');
 				this.paused = false;
@@ -91,7 +91,7 @@ WRK.timer = (function () {
 				console.log('Pause timer');
 				this.paused = true;
 				document.getElementById('workout-pause').innerHTML = 'Continue';
-				clearTimeout(timer2);
+				clearTimeout(clock);
 			}
 		},
 
@@ -104,7 +104,7 @@ WRK.timer = (function () {
 			console.log('Countdown: ' + t);
 			var self = this;
 			this.pausedTime = t;
-			
+
 			//document.getElementById('time').innerHTML = t.toHHMMSS();
 
 			/*
@@ -113,8 +113,9 @@ WRK.timer = (function () {
 			}
 			*/
 
-			timer2 = setTimeout(function() {
+			clock = setTimeout(function() {
 				if (t === 0) {
+					// To do: publish that current exercise is finished
 					// Start next exercise
 					self.start();
 				} else {
@@ -140,11 +141,11 @@ WRK.timer = (function () {
 	};
 
 	function createTimer(workout) {
-	    console.log('timer2 ' + typeof(timer2));
+	    console.log('clock ' + typeof(clock));
 		// Create timer object
 		var wrktimer = new Timer();
 
-		// Copy properties
+		// Copy properties from workout to new Timer object
 		for (var key in workout) {
 			if (workout.hasOwnProperty(key)) {
 				wrktimer[key] = workout[key];
@@ -155,14 +156,14 @@ WRK.timer = (function () {
 
 		wrktimer.workout = workout;
 		wrktimer.duration = wrktimer.totalTime();
-		wrktimer.timeFriendly = WRK.util.timeFriendlyFormat(wrktimer.duration);
+		wrktimer.durationFriendly = WRK.util.timeFriendlyFormat(wrktimer.duration);
 
-		console.log('Total time = ' + wrktimer.duration);
-		console.log('Time friendly = ' + wrktimer.timeFriendly);
+		console.log('Total duration = ' + wrktimer.duration);
+		console.log('Duration friendly = ' + wrktimer.durationFriendly);
 
 		return wrktimer;
 
-		// Render timer interface
+		// Render timer interface from a template - setup timer ready for start button to be clicked
 	}
 
 	return {

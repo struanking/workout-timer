@@ -1,0 +1,34 @@
+<!--
+	Prob need to break into smaller templates
+	1) Header - workout name and duration
+	2) Footer - controls
+	3) Current exercise, rest period and next exercise (plus possibly the 2nd rest and 3rd exercise name so that slide up can work without having to run a new template first)
+-->
+
+<header>
+    <h1>Workout name</h1>
+	<p id="duration">Workout duration</p>
+</header>
+
+<section data-js="countdown-container">
+	<section>
+		<h2>1st Excercise name</h2>
+		<p id="countdown">Countdown</p>
+		<p>Rest</p>
+	</section>
+
+	<section>
+		<h3>2nd Exercise name</h3>
+		<p>Rest</p>
+	</section>
+
+	<section>
+		<h3>3rd Exercise name</h3>
+	</section>
+</section>
+
+<section data-js="controls">
+	<button data-js="start">Start/Stop</button>
+	<button data-js="reset">Reset</button>
+	<button data-js="quit">Quit</button>
+</section>
